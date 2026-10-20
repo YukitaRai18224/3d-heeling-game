@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>포근 농장 - 3D 힐링 농장 게임</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script type="importmap">
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+  </script>
+</head>
+<body>
+  <canvas id="game"></canvas>
+  <div id="floats"></div>
+
+  <div id="hud">
+    <div class="panel info">
+      <span>💰 <b id="coins">0</b></span>
+      <span>📅 <b id="day">1</b>일차</span>
+      <span id="clock">오전 7:00</span>
+      <span id="weather">☀️</span>
+    </div>
+
+    <div class="buttons">
+      <button id="shopBtn" title="상점">🛒 상점</button>
+      <button id="soundBtn" title="소리 켜기/끄기">🔊</button>
+      <button id="helpBtn" title="도움말">❓</button>
+    </div>
+
+    <div id="status" class="panel"></div>
+    <div id="hotbar"></div>
+    <div id="toast"></div>
+  </div>
+
+  <div id="shop" class="modal hidden">
+    <div class="card">
+      <h2>🛒 마을 상점</h2>
+      <p class="sub">씨앗을 사서 밭에 심어 보세요. 지금 가진 돈: 💰 <b id="shopCoins">0</b></p>
+      <div id="shopList"></div>
+      <button class="close" data-close="shop">닫기</button>
+    </div>
+  </div>
+
+  <div id="help" class="modal hidden">
+    <div class="card">
+      <h2>🌾 포근 농장에 오신 걸 환영해요</h2>
+      <ul class="howto">
+        <li><b>이동</b> — WASD / 방향키, 또는 땅을 클릭(터치)</li>
+        <li><b>밭 가꾸기</b> — 밭을 클릭하면 알아서 다음 일을 해요<br />🌱 땅 갈기 → 🌰 씨앗 심기 → 💧 물 주기 → 🧺 수확</li>
+        <li><b>씨앗 고르기</b> — 아래 칸을 누르거나 숫자키 1~4</li>
+        <li><b>닭</b> — 쓰다듬으면 하트를, 아침마다 달걀🥚을 낳아요</li>
+        <li><b>비</b> — 비가 오면 작물이 저절로 물을 머금어요</li>
+        <li><b>카메라</b> — Q / E 회전, 마우스 휠 확대·축소</li>
+        <li><b>가까이 있는 것과 상호작용</b> — 스페이스바</li>
+      </ul>
+      <p class="sub">진행 상황은 브라우저에 자동 저장돼요.</p>
+      <div class="row">
+        <button class="close" data-close="help">시작하기</button>
+        <button id="resetBtn" class="ghost">처음부터 다시</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
