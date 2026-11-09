@@ -134,3 +134,7 @@ button:disabled { opacity: 0.45; cursor: default; transform: none; }
   #status { bottom: 100px; font-size: 14px; max-width: calc(100% - 100px); white-space: normal; text-align: center; }
   #toast { top: 84px; white-space: normal; text-align: center; width: max-content; max-width: calc(100% - 32px); }
 }
+
+#jumpBtn { position: absolute; bottom: 24px; right: 18px; width: 76px; height: 76px; border-radius: 50%; font-size: 16px; background: rgba(255,248,234,0.94); }
+.slot .cnt { min-width: 30px; height: 30px; font-size: 17px; top: -10px; right: -10px; }
+@media (max-width: 600px) { #jumpBtn { bottom: 24px; right: 10px; width: 64px; height: 64px; } .buttons { bottom: 100px; } }

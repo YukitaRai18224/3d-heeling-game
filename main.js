@@ -487,7 +487,12 @@ function makeFarmer() {
 }
 const farmer = makeFarmer();
 scene.add(farmer.g);
-const player = { pos: new THREE.Vector3(0, 0, 6), face: Math.PI, walk: 0, act: 0 };
+const player = { pos: new THREE.Vector3(0, 0, 6), face: Math.PI, walk: 0, act: 0, y: 0, vy: 0, squash: 0 };
+function jump() {
+  if (player.y > 0.001) return;
+  player.vy = 6.2; sfx('pop');
+  burst(player.pos.x, 0.1, player.pos.z, 0xe9dcc0, 5, 1);
+}
 let moveTarget = null;
 
 function resolveCollisions(p, radius = 0.35) {
@@ -863,6 +868,8 @@ function actOnPlot(p) {
     const c = CROPS[p.crop];
     state.coins += c.sell; state.harvested++;
     floatText(`${c.emoji} +${c.sell}`, top, 'gold'); sfx('harvest');
+    state.seeds[p.crop] = (state.seeds[p.crop] || 0) + 1;
+    floatText(`${c.emoji} 씨앗 +1`, new THREE.Vector3(p.x, 0.7, p.z)); buildHotbar();
     burst(p.x, 0.6, p.z, 0xffe36b, 14, 3);
     p.crop = null; p.stage = 0; p.progress = 0; p.watered = false;
     if (state.harvested === 1) toast('첫 수확 축하해요! 🎉 상점에서 새 씨앗을 사 보세요');
@@ -956,7 +963,8 @@ window.addEventListener('keydown', e => {
   if (k >= '1' && k <= '4') selectSeed(CROP_KEYS[+k - 1]);
   if (k === 'q') cam.targetYaw += Math.PI / 4;
   if (k === 'e') cam.targetYaw -= Math.PI / 4;
-  if (k === ' ') { e.preventDefault(); actNearest(); }
+  if (k === ' ') { e.preventDefault(); if (!e.repeat) jump(); }
+  if (k === 'f') actNearest();
   if (k === 'escape') document.querySelectorAll('.modal').forEach(m => m.classList.add('hidden'));
 });
 window.addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
@@ -1107,7 +1115,13 @@ function update(dt) {
     player.walk = lerp(player.walk, Math.round(player.walk / Math.PI) * Math.PI, 1 - Math.exp(-dt * 10));
   }
   const f = farmer;
-  f.g.position.copy(player.pos);
+  if (player.y > 0 || player.vy > 0) {
+    player.vy -= 17 * dt; player.y += player.vy * dt;
+    if (player.y <= 0) { player.y = 0; if (player.vy < -3) { player.squash = 1; burst(player.pos.x, 0.1, player.pos.z, 0xe9dcc0, 4, 1); } player.vy = 0; }
+  }
+  player.squash = Math.max(0, player.squash - dt * 5);
+  f.g.position.set(player.pos.x, player.y, player.pos.z);
+  f.g.scale.set(1 + player.squash * 0.12, 1 - player.squash * 0.15, 1 + player.squash * 0.12);
   f.g.rotation.y = lerpAngle(f.g.rotation.y, player.face, 1 - Math.exp(-dt * 14));
   const sw = Math.sin(player.walk);
   f.body.position.y = Math.abs(sw) * 0.07 + Math.sin(elapsed * 2) * 0.01;
@@ -1246,4 +1260,5 @@ loop();
 window.addEventListener('beforeunload', save);
 
 // 디버그/테스트용
-window.__farm = { state, plots, chickens, eggs, player, actOnPlot, refreshPlot };
+const jb = document.getElementById('jumpBtn'); jb.addEventListener('pointerdown', e => { e.preventDefault(); jump(); });
+window.__farm = { jump, state, plots, chickens, eggs, player, actOnPlot, refreshPlot };
