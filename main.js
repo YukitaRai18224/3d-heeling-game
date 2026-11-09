@@ -1258,6 +1258,8 @@ function loop() {
 }
 loop();
 window.addEventListener('beforeunload', save);
+window.addEventListener('pagehide', save);
+document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
 
 // 디버그/테스트용
 const jb = document.getElementById('jumpBtn'); jb.addEventListener('pointerdown', e => { e.preventDefault(); jump(); });
